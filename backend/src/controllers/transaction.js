@@ -1,14 +1,15 @@
  
-
+import dotenv from "dotenv"
 import { Client } from 'pg'; 
 
+dotenv.config();
 const con = new Client({
-    user: process.env.USER,
-    host:  process.env.HOST, 
-    database:  process.env.DATABASE_NAME,
-    password:  process.env.PASSWORD,
-    port:  process.env.DB_PORT  
-});
+    user:  "postgres",
+    host:  process.env.PGHOST, 
+    database:  process.env.PGDATABASE_NAME,
+    password:  process.env.PGPASSWORD,
+    port:  process.env.PGDB_PORT  
+}); 
 
 const getTransactions = async()=>{
     try { 
@@ -42,7 +43,7 @@ const updateTransactions = async(transactions, s_id)=>{
     }
 }
 
-const addTransactions = async(input)=>{ 
+const addTransaction = async(input)=>{ 
     try {  
         input.user_id = parseInt(input.user_id, 10);
         input.amount = parseInt(input.amount, 10);
@@ -72,7 +73,7 @@ const deleteTransaction = async(s_id)=>{
         throw new Error("Internal server error") ; 
     }
 }
-export default {addTransactions,getTransactions, deleteTransaction} ;
+export default {addTransaction,getTransactions, deleteTransaction} ;
 
  
 
@@ -80,3 +81,4 @@ con.connect()
   .then(() => console.log('Connected to the Database'))
  .catch(err => console.error('Connection error', err.stack));
 
+ 
