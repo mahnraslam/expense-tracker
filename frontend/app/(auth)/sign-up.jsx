@@ -1,12 +1,15 @@
 import * as React from 'react'
-import { Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { useSignUp } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'
+import {styles} from '../../assets/styles/auth.styles'
+import { Colors } from 'react-native/Libraries/NewAppScreen'
 
 export default function SignUpScreen() {
+ const [error, setError] = React.useState("")
+   
   const { isLoaded, signUp, setActive } = useSignUp()
   const router = useRouter()
-
   const [emailAddress, setEmailAddress] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [pendingVerification, setPendingVerification] = React.useState(false)
@@ -57,6 +60,13 @@ export default function SignUpScreen() {
         console.error(JSON.stringify(signUpAttempt, null, 2))
       }
     } catch (err) {
+      if (err.errors?.[0]?.code == "form_identifier_exists"){
+        setError("Email already exits")
+
+      }else{
+        setError('An error occured')
+      }
+      
       // See https://clerk.com/docs/custom-flows/error-handling
       // for more info on error handling
       console.error(JSON.stringify(err, null, 2))
@@ -65,9 +75,18 @@ export default function SignUpScreen() {
 
   if (pendingVerification) {
     return (
-      <>
-        <Text>Verify your email</Text>
-        <TextInput
+       
+      <View  style={styles.verificationContainer}>
+        <Text style = {styles.Text}>Verify your email</Text>
+        {error? 
+        <View> 
+          <Ionicon name = 'alert-circle' size = {20} color={COLORS.expense} />
+          <Test style = {styles.errorText}> error </Test>
+          <TouchableOpacity>
+            <Ionicon name = "close" size={20} color={COLORS.textLight} /> 
+          </TouchableOpacity>
+        </View> :null }
+        <TextInput    style = {[styles.input, error && styles.errorInput]}
           value={code}
           placeholder="Enter your verification code"
           onChangeText={(code) => setCode(code)}
@@ -75,28 +94,30 @@ export default function SignUpScreen() {
         <TouchableOpacity onPress={onVerifyPress}>
           <Text>Verify</Text>
         </TouchableOpacity>
-      </>
-    )
+      </View>
+    ) ;
   }
 
   return (
-    <View>
+    <KeyboardAvoidingView style = {{flex:1, justifyContent:'center',alignItems:'center'}}> 
+    <View  style={styles.verificationContainer} >
       <>
-        <Text>Sign up</Text>
-        <TextInput
+        <Text  style = {styles.title} >Sign up</Text>
+        <TextInput    style = {[styles.input, error && styles.errorInput]}
           autoCapitalize="none"
           value={emailAddress}
           placeholder="Enter email"
           onChangeText={(email) => setEmailAddress(email)}
         />
-        <TextInput
+        <TextInput    style = {[styles.input, error && styles.errorInput]}
+         
           value={password}
           placeholder="Enter password"
           secureTextEntry={true}
           onChangeText={(password) => setPassword(password)}
         />
-        <TouchableOpacity onPress={onSignUpPress}>
-          <Text>Continue</Text>
+        <TouchableOpacity style = {styles.button}  onPress={onSignUpPress}>
+          <Text>Sign up</Text>
         </TouchableOpacity>
         <View style={{ display: 'flex', flexDirection: 'row', gap: 3 }}>
           <Text>Already have an account?</Text>
@@ -106,5 +127,6 @@ export default function SignUpScreen() {
         </View>
       </>
     </View>
+  </KeyboardAvoidingView>
   )
 }

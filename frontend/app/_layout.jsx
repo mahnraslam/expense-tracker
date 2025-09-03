@@ -1,12 +1,12 @@
  import { ClerkProvider } from '@clerk/clerk-expo'
 import { Slot } from 'expo-router'
-import SafeScreen from '../components/safeScreen';
+import Screen from '../components/SafeScreen';
 export default function RootLayout() {
   return(
       <ClerkProvider>
-      <SafeScreen>
+      <Screen>
       <Slot />
-      </SafeScreen>
+      </Screen>
     </ClerkProvider>
    );
 }

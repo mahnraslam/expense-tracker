@@ -3,13 +3,13 @@
  import {useSafeAreaInsets } from "react-native-safe-area-context"
 import { COLORS } from '../contants/colors';
  
- const SafeScreen = ({children}) => {
+ const Screen = ({children}) => {
    const insects = useSafeAreaInsets () ;
    return (
-     <View style= {{paddingTop:insects.top, flex:1, backgroundColor:COLORS.coffee.background}}>
+     <View style= {{paddingTop:insects.top, flex:1, backgroundColor:COLORS.background}}>
         {children}
      </View>
    )
  }
  
- export default SafeScreen
+ export default Screen
