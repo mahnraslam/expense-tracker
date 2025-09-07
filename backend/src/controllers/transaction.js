@@ -10,10 +10,23 @@ const con = new Client({
     password:  process.env.PGPASSWORD,
     port:  process.env.PGDB_PORT  
 }); 
-
-const getTransactions = async()=>{
+const getSummary = async(user_id)=>{
+    const id = parseInt(user_id, 10);
     try { 
-        const result = await con.query("Select * from transactions") ;
+        const balance  = await con.query("Select SUM(amount) as total_amount, category from transaction where user_id=$1 GROUP BY category",[id]) ;       
+        const income = await con.query("Select SUM(amount) as income from transaction where user_id=$1 AND amount>0",[id]) ;
+        const expense = await con.query("Select SUM(amount) as expense from transaction where user_id=$1 AND amount<0",[id]) ;
+        return {balance:balance.rows, income:income.rows[0].income, expense:expense.rows[0].expense} ;
+    }   
+    catch(err){
+        console.error(err) ;
+        throw new Error("Internal server error") ;
+    }
+    }
+const getTransactions = async(user_id)=>{
+    const id = parseInt(user_id, 10);
+    try { 
+        const result = await con.query("Select * from transaction where id=$1  order by created_at desc",[id]) ;
         return result ;  
     }
     catch(err){
@@ -27,7 +40,7 @@ const updateTransactions = async(transactions, s_id)=>{
         const t_id = parseInt(s_id, 10); 
         
         const {id,user_id, amount, created_at,category} = transactions ;
-        const query = `Update transactions set  id = $1,
+        const query = `Update transaction set  id = $1,
                         user_id=$2,
                         amount = $3,
                         created_at = $4,
@@ -48,7 +61,7 @@ const addTransaction = async(input)=>{
         input.user_id = parseInt(input.user_id, 10);
         input.amount = parseInt(input.amount, 10);
         const  {user_id,category,amount,created_at} = input ;
-        const query = `Insert into  transactions (user_id,category,amount,created_at) Values ($1,$2,$3,$4)`;  
+        const query = `Insert into  transaction (user_id,category,amount,created_at) Values ($1,$2,$3,$4)`;  
         const values = {user_id,category,amount,created_at}
         await con.query(query,values) ;
         return "Sucessfully added" ;

@@ -1,4 +1,4 @@
-import * as React from 'react'
+ import * as React from 'react'
 import { KeyboardAvoidingView, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import { useSignUp } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'

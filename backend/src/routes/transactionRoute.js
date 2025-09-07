@@ -7,7 +7,7 @@ const  {addTransaction,getTransactions, deleteTransaction}  = transaction ;
 
 router.get('/', (req, res) => {
   
-getTransactions()
+getTransactions(req.params.id)
 .then(response=>{ 
     res.json(response.rows);
   })
@@ -15,6 +15,15 @@ getTransactions()
      res.json({message : err}) ;
   })
 }) 
+router.get('/:id', (req, res) => {
+  getSummary(req.params.id)
+  .then(response=>{ 
+    res.json(response); 
+  })
+  .catch(err => {
+     res.json({message : err}) ;
+  })
+})
 
 
 router.delete('/:id', (req, res) => {

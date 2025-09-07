@@ -1,4 +1,4 @@
-import { useSignIn } from '@clerk/clerk-expo'
+ import { useSignIn } from '@clerk/clerk-expo'
 import { Link, useRouter } from 'expo-router'
  import * as React from 'react'
 import { Text, TextInput, TouchableOpacity, View } from 'react-native' 
@@ -82,7 +82,7 @@ export default function Page() {
       <View style={{ display: 'flex', flexDirection: 'row', gap: 3 }}>
         
       <Text>Don&apos;t have an account?</Text>
-        <Link href="/sign-up">
+        <Link href="/Sign-up">
           <Text>Sign up</Text>
         </Link>
       </View>
